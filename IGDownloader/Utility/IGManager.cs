@@ -18,7 +18,7 @@ namespace IGDownloader.Utility
         private static String USER_SEARCH_URL = API_BASE_URL + "/users/search?q={0}&client_id={1}";
         private static String USER_INFO_URL = API_BASE_URL + "/users/{0}?client_id={1}";
         private static String USER_MEDIA_URL = API_BASE_URL + "/users/{0}/media/recent?count={1}&client_id={2}";
-        private static int MAX_RETURN = 20;
+        private static int MAX_RETURN = 30;
 
         private HttpClient mClient = null;
         private String mClientId = null;

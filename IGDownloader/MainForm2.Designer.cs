@@ -101,7 +101,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1182, 853);
+            this.ClientSize = new System.Drawing.Size(1182, 503);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.btnSelectPath);
             this.Controls.Add(this.txtSavePath);
@@ -113,6 +113,8 @@
             this.Name = "MainForm2";
             this.Text = "MainForm2";
             this.Deactivate += new System.EventHandler(this.MainForm2_Deactivate);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm2_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm2_FormClosed);
             this.Load += new System.EventHandler(this.MainForm2_Load);
             this.Leave += new System.EventHandler(this.MainForm2_Leave);
             this.ResumeLayout(false);
