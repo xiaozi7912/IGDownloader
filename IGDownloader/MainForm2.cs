@@ -200,9 +200,17 @@ namespace IGDownloader
 
         private void readAccountList()
         {
-            String filePath = Path.Combine(FILE_ROOT_PATH, FILE_NAME_ACCOUNT);
-            String jsonString = File.ReadAllText(filePath);
-            mUserModelList = JsonConvert.DeserializeObject<List<UserModel>>(jsonString);
+            try
+            {
+                String filePath = Path.Combine(FILE_ROOT_PATH, FILE_NAME_ACCOUNT);
+                String jsonString = File.ReadAllText(filePath);
+                mUserModelList = JsonConvert.DeserializeObject<List<UserModel>>(jsonString);
+            }
+            catch (Exception e)
+            {
+                mUserModelList = new List<UserModel>();
+                Console.WriteLine(e.Message);
+            }
         }
 
         private void updateAccountListBox()
