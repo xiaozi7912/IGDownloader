@@ -89,6 +89,7 @@
             this.btnSelectPath.TabIndex = 5;
             this.btnSelectPath.Text = "選擇目錄";
             this.btnSelectPath.UseVisualStyleBackColor = true;
+            this.btnSelectPath.Click += new System.EventHandler(this.btnSelectPath_Click);
             // 
             // progressBar
             // 

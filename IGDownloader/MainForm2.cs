@@ -1,4 +1,5 @@
 ﻿using IGDownloader.Model;
+using IGDownloader.Models;
 using IGDownloader.Utility;
 using Newtonsoft.Json;
 using System;
@@ -14,9 +15,12 @@ namespace IGDownloader
     {
         private const String FILE_ROOT_PATH = "SaveData";
         private const String FILE_NAME_ACCOUNT = "AccountList.json";
+        private const String FILE_NAME_CONFIG = "Config.json";
+
         private ImageList mPictureList = null;
         private UserModel mSelectedUserModel = null;
         private List<UserModel> mUserModelList = null;
+        private ConfigModel mConfigModel = null;
 
         private int mSelectedUserIndex = 0;
         private Boolean mIsPictureLoading = false;
@@ -30,7 +34,9 @@ namespace IGDownloader
         {
             checkDirExists();
             readAccountList();
+            readConfig();
             updateAccountListBox();
+            updateConfig();
 
             mPictureList = new ImageList();
             mPictureList.ImageSize = new Size(128, 128);
@@ -58,6 +64,7 @@ namespace IGDownloader
         private void MainForm2_FormClosed(object sender, FormClosedEventArgs e)
         {
             writeAccountList();
+            writeConfig();
         }
 
         private void btnAddAccount_Click(object sender, EventArgs e)
@@ -112,7 +119,7 @@ namespace IGDownloader
                         MediaData mediaItem = result.data[i];
                         IGManager.defaultManager().getPicture(i, mediaItem.images.standard_resolution.url, (int index, Image pictureResult) =>
                         {
-                            imageArray[index] = pictureResult;                            
+                            imageArray[index] = pictureResult;
                             progressBar.Value++;
                             Console.WriteLine("index : " + index);
                             Console.WriteLine("Download Picture Done");
@@ -123,7 +130,7 @@ namespace IGDownloader
                     new Thread(() =>
                     {
                         while (progressBar.Value != progressBar.Maximum)
-                        {                            
+                        {
                             Thread.Sleep(500);
                         }
 
@@ -162,6 +169,20 @@ namespace IGDownloader
         {
 
         }
+
+        private void btnSelectPath_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDailog = new FolderBrowserDialog();
+            DialogResult result = folderBrowserDailog.ShowDialog();
+
+            Console.WriteLine("result : " + result);
+            if (result == DialogResult.OK)
+            {
+                mConfigModel.savePath = folderBrowserDailog.SelectedPath;
+                txtSavePath.Text = folderBrowserDailog.SelectedPath;
+            }
+        }
+
         private void checkDirExists()
         {
             if (!Directory.Exists(FILE_ROOT_PATH))
@@ -190,6 +211,33 @@ namespace IGDownloader
             {
                 listAccount.Items.Add(item.data.username);
             }
+        }
+
+        private void writeConfig()
+        {
+            String filePath = Path.Combine(FILE_ROOT_PATH, FILE_NAME_CONFIG);
+            String jsonString = JsonConvert.SerializeObject(mConfigModel);
+            File.WriteAllText(filePath, jsonString);
+        }
+
+        private void readConfig()
+        {
+            try
+            {
+                String filePath = Path.Combine(FILE_ROOT_PATH, FILE_NAME_CONFIG);
+                String jsonString = File.ReadAllText(filePath);
+                mConfigModel = JsonConvert.DeserializeObject<ConfigModel>(jsonString);
+            }
+            catch (Exception e)
+            {
+                mConfigModel = new ConfigModel();
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        private void updateConfig()
+        {
+            txtSavePath.Text = mConfigModel.savePath;
         }
     }
 }
