@@ -35,22 +35,23 @@
             this.txtSavePath = new System.Windows.Forms.TextBox();
             this.btnSelectPath = new System.Windows.Forms.Button();
             this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.btnSaveAllPicture = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txtAccount
             // 
-            this.txtAccount.Location = new System.Drawing.Point(12, 13);
+            this.txtAccount.Location = new System.Drawing.Point(12, 43);
             this.txtAccount.Name = "txtAccount";
             this.txtAccount.Size = new System.Drawing.Size(200, 25);
             this.txtAccount.TabIndex = 0;
             // 
             // btnAddAccount
             // 
-            this.btnAddAccount.Location = new System.Drawing.Point(218, 13);
+            this.btnAddAccount.Location = new System.Drawing.Point(219, 43);
             this.btnAddAccount.Name = "btnAddAccount";
             this.btnAddAccount.Size = new System.Drawing.Size(100, 25);
             this.btnAddAccount.TabIndex = 1;
-            this.btnAddAccount.Text = "新增";
+            this.btnAddAccount.Text = "新增帳號";
             this.btnAddAccount.UseVisualStyleBackColor = true;
             this.btnAddAccount.Click += new System.EventHandler(this.btnAddAccount_Click);
             // 
@@ -58,9 +59,9 @@
             // 
             this.listAccount.FormattingEnabled = true;
             this.listAccount.ItemHeight = 15;
-            this.listAccount.Location = new System.Drawing.Point(12, 44);
+            this.listAccount.Location = new System.Drawing.Point(12, 74);
             this.listAccount.Name = "listAccount";
-            this.listAccount.Size = new System.Drawing.Size(200, 424);
+            this.listAccount.Size = new System.Drawing.Size(200, 394);
             this.listAccount.TabIndex = 2;
             this.listAccount.SelectedIndexChanged += new System.EventHandler(this.listAccount_SelectedIndexChanged);
             this.listAccount.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listAccount_MouseDoubleClick);
@@ -76,14 +77,14 @@
             // 
             // txtSavePath
             // 
-            this.txtSavePath.Location = new System.Drawing.Point(219, 44);
+            this.txtSavePath.Location = new System.Drawing.Point(12, 13);
             this.txtSavePath.Name = "txtSavePath";
-            this.txtSavePath.Size = new System.Drawing.Size(845, 25);
+            this.txtSavePath.Size = new System.Drawing.Size(200, 25);
             this.txtSavePath.TabIndex = 4;
             // 
             // btnSelectPath
             // 
-            this.btnSelectPath.Location = new System.Drawing.Point(1070, 44);
+            this.btnSelectPath.Location = new System.Drawing.Point(219, 13);
             this.btnSelectPath.Name = "btnSelectPath";
             this.btnSelectPath.Size = new System.Drawing.Size(100, 25);
             this.btnSelectPath.TabIndex = 5;
@@ -98,11 +99,21 @@
             this.progressBar.Size = new System.Drawing.Size(952, 25);
             this.progressBar.TabIndex = 6;
             // 
+            // btnSaveAllPicture
+            // 
+            this.btnSaveAllPicture.Location = new System.Drawing.Point(1060, 41);
+            this.btnSaveAllPicture.Name = "btnSaveAllPicture";
+            this.btnSaveAllPicture.Size = new System.Drawing.Size(110, 25);
+            this.btnSaveAllPicture.TabIndex = 7;
+            this.btnSaveAllPicture.Text = "儲存所有圖片";
+            this.btnSaveAllPicture.UseVisualStyleBackColor = true;
+            // 
             // MainForm2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1182, 503);
+            this.Controls.Add(this.btnSaveAllPicture);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.btnSelectPath);
             this.Controls.Add(this.txtSavePath);
@@ -132,5 +143,6 @@
         private System.Windows.Forms.TextBox txtSavePath;
         private System.Windows.Forms.Button btnSelectPath;
         private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Button btnSaveAllPicture;
     }
 }

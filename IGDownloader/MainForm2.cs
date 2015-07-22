@@ -41,7 +41,7 @@ namespace IGDownloader
             mPictureList = new ImageList();
             mPictureList.ImageSize = new Size(128, 128);
             mPictureList.ColorDepth = ColorDepth.Depth32Bit;
-            txtSavePath.Enabled = false;
+            txtSavePath.ReadOnly = true;
             listPicture.View = View.LargeIcon;
             listPicture.LargeImageList = mPictureList;
         }
