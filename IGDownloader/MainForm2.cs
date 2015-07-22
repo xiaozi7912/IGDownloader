@@ -17,12 +17,13 @@ namespace IGDownloader
         private const String FILE_NAME_ACCOUNT = "AccountList.json";
         private const String FILE_NAME_CONFIG = "Config.json";
 
+        private List<UserModel> mUserModelList = null;
+        private List<Image> mOriginalPictureList = null;
+        private List<MediaModel> mMediaModelList = null;
         private ImageList mPictureList = null;
         private UserModel mSelectedUserModel = null;
-        private List<UserModel> mUserModelList = null;
         private ConfigModel mConfigModel = null;
         private MediaModel mMediaModel = null;
-        private List<Image> mOriginalPictureList = null;
 
         private int mSelectedUserIndex = 0;
         private Boolean mIsPictureLoading = false;
@@ -46,6 +47,7 @@ namespace IGDownloader
             txtSavePath.ReadOnly = true;
             listPicture.View = View.LargeIcon;
             listPicture.LargeImageList = mPictureList;
+            labelTotalCount.Text = "照片總數：0";
         }
 
         private void MainForm2_Deactivate(object sender, EventArgs e)
@@ -67,6 +69,19 @@ namespace IGDownloader
         {
             writeAccountList();
             writeConfig();
+        }
+
+        private void txtAccount_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtAccount_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar.Equals(Keys.Enter))
+            {
+                btnAddAccount.PerformClick();
+            }
         }
 
         private void btnAddAccount_Click(object sender, EventArgs e)
@@ -100,62 +115,13 @@ namespace IGDownloader
 
         private void listAccount_SelectedIndexChanged(object sender, EventArgs e)
         {
+            mOriginalPictureList = new List<Image>();
+            mMediaModelList = new List<MediaModel>();
             mSelectedUserIndex = listAccount.SelectedIndex;
+            mSelectedUserModel = null;
+            btnLoadNextPage.Enabled = true;
+            getUserMedia();
             Console.WriteLine("mSelectedAccountIndex : " + mSelectedUserIndex);
-
-            if (mSelectedUserIndex != -1 && !mIsPictureLoading)
-            {
-                mSelectedUserModel = mUserModelList[mSelectedUserIndex];
-                mIsPictureLoading = true;
-                btnSaveAllPicture.Enabled = false;
-                IGManager.defaultManager().getUserMedia(mSelectedUserModel.data.id, (MediaModel result) =>
-                {
-                    Image[] imageArray = new Image[result.data.Count];
-                    mMediaModel = result;
-                    mPictureList.Images.Clear();
-                    listPicture.Items.Clear();
-                    progressBar.Value = 0;
-                    progressBar.Maximum = result.data.Count;
-
-                    for (int i = 0; i < result.data.Count; i++)
-                    {
-                        Console.WriteLine("Download Picture Start");
-                        MediaData mediaItem = result.data[i];
-                        IGManager.defaultManager().getPicture(i, mediaItem.images.standard_resolution.url, (int index, Image pictureResult) =>
-                        {
-                            imageArray[index] = pictureResult;
-                            progressBar.Value++;
-                            Console.WriteLine("index : " + index);
-                            Console.WriteLine("Download Picture Done");
-                        });
-                        Console.WriteLine("Download Picture End");
-                    }
-
-                    new Thread(() =>
-                    {
-                        while (progressBar.Value != progressBar.Maximum)
-                        {
-                            Thread.Sleep(500);
-                        }
-
-                        mIsPictureLoading = false;
-                        mOriginalPictureList = new List<Image>();
-
-                        Invoke(new Action(() =>
-                        {
-                            btnSaveAllPicture.Enabled = true;
-                            for (int i = 0; i < imageArray.Length; i++)
-                            {
-                                mOriginalPictureList.Add(imageArray[i]);
-                                mPictureList.Images.Add(imageArray[i]);
-                                ListViewItem viewItem = new ListViewItem();
-                                viewItem.ImageIndex = i;
-                                listPicture.Items.Add(viewItem);
-                            }
-                        }));
-                    }).Start();
-                });
-            }
         }
 
         private void listAccount_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -196,27 +162,38 @@ namespace IGDownloader
             String dirSavePath = String.Format("{0}\\{1}", mConfigModel.savePath, mSelectedUserModel.data.username);
             checkDirExists(dirSavePath);
             progressBar.Value = 0;
-            progressBar.Maximum = mMediaModel.data.Count;
+            progressBar.Maximum = mOriginalPictureList.Count;
             btnSaveAllPicture.Enabled = false;
+            int currentIndex = 0;
 
-            for (int i = 0; i < mMediaModel.data.Count; i++)
+            foreach (MediaModel mediaModel in mMediaModelList)
             {
-                MediaData pictureItem = mMediaModel.data[i];
-                String fileSavePath = String.Format("{0}\\{1}.jpg", dirSavePath, pictureItem.id);
-                Bitmap pictureBitmap = new Bitmap(mOriginalPictureList[i]);
+                for (int i = 0; i < mediaModel.data.Count; i++)
+                {
+                    MediaData pictureItem = mediaModel.data[i];
+                    String fileSavePath = String.Format("{0}\\{1}.jpg", dirSavePath, pictureItem.id);
+                    Bitmap pictureBitmap = new Bitmap(mOriginalPictureList[currentIndex + i]);
 
-                try
-                {
-                    pictureBitmap.Save(fileSavePath);
-                    pictureBitmap.Dispose();
-                    progressBar.Value++;
+                    try
+                    {
+                        pictureBitmap.Save(fileSavePath);
+                        pictureBitmap.Dispose();
+                        progressBar.Value++;
+                    }
+                    catch (Exception exp)
+                    {
+                        Console.WriteLine("exp : " + exp.Message);
+                    }
                 }
-                catch (Exception exp)
-                {
-                    Console.WriteLine("exp : " + exp.Message);
-                }
+                currentIndex += mediaModel.data.Count;
             }
+
             btnSaveAllPicture.Enabled = true;
+        }
+
+        private void btnLoadNextPage_Click(object sender, EventArgs e)
+        {
+            getUserMedia();
         }
 
         private void checkDirExists(String dirPath)
@@ -279,9 +256,110 @@ namespace IGDownloader
             }
         }
 
+        private void getUserMedia()
+        {
+            if (mSelectedUserIndex != -1 && !mIsPictureLoading)
+            {
+                Image[] imageArray = null;
+                mIsPictureLoading = true;
+                updateControlStatus();
+                progressBar.Value = 0;
+
+                if (mSelectedUserModel == null)
+                {
+                    mSelectedUserModel = mUserModelList[mSelectedUserIndex];
+
+                    IGManager.defaultManager().getUserMedia(mSelectedUserModel.data.id, (MediaModel result) =>
+                    {
+                        imageArray = new Image[result.data.Count];
+                        mPictureList.Images.Clear();
+                        listPicture.Items.Clear();
+                        progressBar.Maximum = result.data.Count;
+                        mMediaModel = result;
+                        mMediaModelList.Add(result);
+
+                        for (int i = 0; i < result.data.Count; i++)
+                        {
+                            Console.WriteLine("Download Picture Start");
+                            MediaData mediaItem = result.data[i];
+                            IGManager.defaultManager().getPicture(i, mediaItem.images.standard_resolution.url, (int index, Image pictureResult) =>
+                            {
+                                imageArray[index] = pictureResult;
+                                progressBar.Value++;
+                                Console.WriteLine("index : " + index);
+                                Console.WriteLine("Download Picture Done");
+                            });
+                            Console.WriteLine("Download Picture End");
+                        }
+                    });
+                }
+                else
+                {
+                    IGManager.defaultManager().getNextPageMedia(mMediaModel.pagination.next_url, (MediaModel result) =>
+                    {
+                        imageArray = new Image[result.data.Count];
+                        progressBar.Maximum = result.data.Count;
+                        mMediaModel = result;
+                        mMediaModelList.Add(result);
+
+                        for (int i = 0; i < result.data.Count; i++)
+                        {
+                            Console.WriteLine("Download Picture Start");
+                            MediaData mediaItem = result.data[i];
+                            IGManager.defaultManager().getPicture(i, mediaItem.images.standard_resolution.url, (int index, Image pictureResult) =>
+                            {
+                                imageArray[index] = pictureResult;
+                                progressBar.Value++;
+                                Console.WriteLine("index : " + index);
+                                Console.WriteLine("Download Picture Done");
+                            });
+                            Console.WriteLine("Download Picture End");
+                        }
+                    });
+                }
+
+                new Thread(() =>
+                {
+                    while (progressBar.Value != progressBar.Maximum)
+                    {
+                        Thread.Sleep(500);
+                    }
+
+                    mIsPictureLoading = false;
+
+                    Invoke(new Action(() =>
+                    {
+                        int currentPictureCount = mPictureList.Images.Count;
+
+                        for (int i = 0; i < imageArray.Length; i++)
+                        {
+                            mOriginalPictureList.Add(imageArray[i]);
+                            mPictureList.Images.Add(imageArray[i]);
+                            ListViewItem viewItem = new ListViewItem();
+                            viewItem.ImageIndex = currentPictureCount + i;
+                            listPicture.Items.Add(viewItem);
+                        }
+                        updateControlStatus();
+                    }));
+                }).Start();
+            }
+        }
+
         private void updateConfig()
         {
             txtSavePath.Text = mConfigModel.savePath;
+        }
+
+        private void updateControlStatus()
+        {
+            btnSaveAllPicture.Enabled = !mIsPictureLoading;
+            btnLoadNextPage.Enabled = !mIsPictureLoading;
+            labelTotalCount.Text = String.Format("照片總數：{0}", mPictureList.Images.Count);
+
+            if (mMediaModel != null)
+            {
+                btnLoadNextPage.Enabled = (mMediaModel.pagination.next_url == null) ? false : true;
+            }
         }
     }
 }

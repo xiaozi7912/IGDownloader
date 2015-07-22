@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IGDownloader
 {
     class MediaModel
     {
+        public MediaPagination pagination { get; set; }
         public MediaMeta meta { get; set; }
         public List<MediaData> data { get; set; }
+    }
+
+    class MediaPagination
+    {
+        public String next_url { get; set; }
+        public String next_max_id { get; set; }
     }
 
     class MediaMeta
@@ -30,7 +34,7 @@ namespace IGDownloader
     class MediaCaption
     {
         public String id { get; set; }
-        public String text { get; set; }        
+        public String text { get; set; }
         public String created_time { get; set; }
     }
 

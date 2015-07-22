@@ -1,14 +1,9 @@
 ﻿using IGDownloader.Model;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IGDownloader.Utility
 {
@@ -64,6 +59,15 @@ namespace IGDownloader.Utility
             Console.WriteLine("getUserMedia");
             String requestUrl = String.Format(USER_MEDIA_URL, userId, MAX_RETURN, mClientId);
             HttpResponseMessage response = await mClient.GetAsync(requestUrl);
+            response.EnsureSuccessStatusCode();
+            String responseBody = await response.Content.ReadAsStringAsync();
+            handler.Invoke(JsonConvert.DeserializeObject<MediaModel>(responseBody));
+        }
+
+        public async void getNextPageMedia(String nextPageUrl, mediaResponseHandler handler)
+        {
+            Console.WriteLine("getUserMedia");
+            HttpResponseMessage response = await mClient.GetAsync(nextPageUrl);
             response.EnsureSuccessStatusCode();
             String responseBody = await response.Content.ReadAsStringAsync();
             handler.Invoke(JsonConvert.DeserializeObject<MediaModel>(responseBody));

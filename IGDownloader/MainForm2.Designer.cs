@@ -36,6 +36,8 @@
             this.btnSelectPath = new System.Windows.Forms.Button();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.btnSaveAllPicture = new System.Windows.Forms.Button();
+            this.btnLoadNextPage = new System.Windows.Forms.Button();
+            this.labelTotalCount = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // txtAccount
@@ -44,6 +46,8 @@
             this.txtAccount.Name = "txtAccount";
             this.txtAccount.Size = new System.Drawing.Size(200, 25);
             this.txtAccount.TabIndex = 0;
+            this.txtAccount.TextChanged += new System.EventHandler(this.txtAccount_TextChanged);
+            this.txtAccount.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtAccount_KeyPress);
             // 
             // btnAddAccount
             // 
@@ -101,7 +105,8 @@
             // 
             // btnSaveAllPicture
             // 
-            this.btnSaveAllPicture.Location = new System.Drawing.Point(1060, 41);
+            this.btnSaveAllPicture.AutoSize = true;
+            this.btnSaveAllPicture.Location = new System.Drawing.Point(423, 43);
             this.btnSaveAllPicture.Name = "btnSaveAllPicture";
             this.btnSaveAllPicture.Size = new System.Drawing.Size(110, 25);
             this.btnSaveAllPicture.TabIndex = 7;
@@ -109,11 +114,34 @@
             this.btnSaveAllPicture.UseVisualStyleBackColor = true;
             this.btnSaveAllPicture.Click += new System.EventHandler(this.btnSaveAllPicture_Click);
             // 
+            // btnLoadNextPage
+            // 
+            this.btnLoadNextPage.AutoSize = true;
+            this.btnLoadNextPage.Location = new System.Drawing.Point(325, 43);
+            this.btnLoadNextPage.Name = "btnLoadNextPage";
+            this.btnLoadNextPage.Size = new System.Drawing.Size(92, 25);
+            this.btnLoadNextPage.TabIndex = 8;
+            this.btnLoadNextPage.Text = "載入圖片";
+            this.btnLoadNextPage.UseVisualStyleBackColor = true;
+            this.btnLoadNextPage.Click += new System.EventHandler(this.btnLoadNextPage_Click);
+            // 
+            // labelTotalCount
+            // 
+            this.labelTotalCount.AutoSize = true;
+            this.labelTotalCount.Font = new System.Drawing.Font("PMingLiU", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.labelTotalCount.Location = new System.Drawing.Point(1021, 46);
+            this.labelTotalCount.Name = "labelTotalCount";
+            this.labelTotalCount.Size = new System.Drawing.Size(149, 19);
+            this.labelTotalCount.TabIndex = 9;
+            this.labelTotalCount.Text = "照片總數：99999";
+            // 
             // MainForm2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1182, 503);
+            this.Controls.Add(this.labelTotalCount);
+            this.Controls.Add(this.btnLoadNextPage);
             this.Controls.Add(this.btnSaveAllPicture);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.btnSelectPath);
@@ -145,5 +173,7 @@
         private System.Windows.Forms.Button btnSelectPath;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Button btnSaveAllPicture;
+        private System.Windows.Forms.Button btnLoadNextPage;
+        private System.Windows.Forms.Label labelTotalCount;
     }
 }
