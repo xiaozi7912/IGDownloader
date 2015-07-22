@@ -107,6 +107,7 @@
             this.btnSaveAllPicture.TabIndex = 7;
             this.btnSaveAllPicture.Text = "儲存所有圖片";
             this.btnSaveAllPicture.UseVisualStyleBackColor = true;
+            this.btnSaveAllPicture.Click += new System.EventHandler(this.btnSaveAllPicture_Click);
             // 
             // MainForm2
             // 

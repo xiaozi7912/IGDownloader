@@ -21,6 +21,8 @@ namespace IGDownloader
         private UserModel mSelectedUserModel = null;
         private List<UserModel> mUserModelList = null;
         private ConfigModel mConfigModel = null;
+        private MediaModel mMediaModel = null;
+        private List<Image> mOriginalPictureList = null;
 
         private int mSelectedUserIndex = 0;
         private Boolean mIsPictureLoading = false;
@@ -32,7 +34,7 @@ namespace IGDownloader
 
         private void MainForm2_Load(object sender, EventArgs e)
         {
-            checkDirExists();
+            checkDirExists(FILE_ROOT_PATH);
             readAccountList();
             readConfig();
             updateAccountListBox();
@@ -40,7 +42,7 @@ namespace IGDownloader
 
             mPictureList = new ImageList();
             mPictureList.ImageSize = new Size(128, 128);
-            mPictureList.ColorDepth = ColorDepth.Depth32Bit;
+            mPictureList.ColorDepth = ColorDepth.Depth24Bit;
             txtSavePath.ReadOnly = true;
             listPicture.View = View.LargeIcon;
             listPicture.LargeImageList = mPictureList;
@@ -103,11 +105,13 @@ namespace IGDownloader
 
             if (mSelectedUserIndex != -1 && !mIsPictureLoading)
             {
-                UserModel selectedUser = mUserModelList[mSelectedUserIndex];
+                mSelectedUserModel = mUserModelList[mSelectedUserIndex];
                 mIsPictureLoading = true;
-                IGManager.defaultManager().getUserMedia(selectedUser.data.id, (MediaModel result) =>
+                btnSaveAllPicture.Enabled = false;
+                IGManager.defaultManager().getUserMedia(mSelectedUserModel.data.id, (MediaModel result) =>
                 {
                     Image[] imageArray = new Image[result.data.Count];
+                    mMediaModel = result;
                     mPictureList.Images.Clear();
                     listPicture.Items.Clear();
                     progressBar.Value = 0;
@@ -135,10 +139,14 @@ namespace IGDownloader
                         }
 
                         mIsPictureLoading = false;
+                        mOriginalPictureList = new List<Image>();
+
                         Invoke(new Action(() =>
                         {
+                            btnSaveAllPicture.Enabled = true;
                             for (int i = 0; i < imageArray.Length; i++)
                             {
+                                mOriginalPictureList.Add(imageArray[i]);
                                 mPictureList.Images.Add(imageArray[i]);
                                 ListViewItem viewItem = new ListViewItem();
                                 viewItem.ImageIndex = i;
@@ -183,11 +191,39 @@ namespace IGDownloader
             }
         }
 
-        private void checkDirExists()
+        private void btnSaveAllPicture_Click(object sender, EventArgs e)
         {
-            if (!Directory.Exists(FILE_ROOT_PATH))
+            String dirSavePath = String.Format("{0}\\{1}", mConfigModel.savePath, mSelectedUserModel.data.username);
+            checkDirExists(dirSavePath);
+            progressBar.Value = 0;
+            progressBar.Maximum = mMediaModel.data.Count;
+            btnSaveAllPicture.Enabled = false;
+
+            for (int i = 0; i < mMediaModel.data.Count; i++)
             {
-                Directory.CreateDirectory(FILE_ROOT_PATH);
+                MediaData pictureItem = mMediaModel.data[i];
+                String fileSavePath = String.Format("{0}\\{1}.jpg", dirSavePath, pictureItem.id);
+                Bitmap pictureBitmap = new Bitmap(mOriginalPictureList[i]);
+
+                try
+                {
+                    pictureBitmap.Save(fileSavePath);
+                    pictureBitmap.Dispose();
+                    progressBar.Value++;
+                }
+                catch (Exception exp)
+                {
+                    Console.WriteLine("exp : " + exp.Message);
+                }
+            }
+            btnSaveAllPicture.Enabled = true;
+        }
+
+        private void checkDirExists(String dirPath)
+        {
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
             }
         }
 
