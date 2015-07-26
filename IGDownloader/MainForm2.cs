@@ -166,27 +166,34 @@ namespace IGDownloader
             btnSaveAllPicture.Enabled = false;
             int currentIndex = 0;
 
-            foreach (MediaModel mediaModel in mMediaModelList)
+            if (mConfigModel.savePath != null)
             {
-                for (int i = 0; i < mediaModel.data.Count; i++)
+                foreach (MediaModel mediaModel in mMediaModelList)
                 {
-                    MediaData pictureItem = mediaModel.data[i];
-                    String fileSavePath = String.Format("{0}\\{1}.jpg", dirSavePath, pictureItem.id);
-                    Bitmap pictureBitmap = new Bitmap(mOriginalPictureList[currentIndex + i]);
+                    for (int i = 0; i < mediaModel.data.Count; i++)
+                    {
+                        MediaData pictureItem = mediaModel.data[i];
+                        String fileSavePath = String.Format("{0}\\{1}.jpg", dirSavePath, pictureItem.id);
+                        Bitmap pictureBitmap = new Bitmap(mOriginalPictureList[currentIndex + i]);
 
-                    try
-                    {
-                        pictureBitmap.Save(fileSavePath);
-                        pictureBitmap.Dispose();
-                        progressBar.Value++;
+                        try
+                        {
+                            pictureBitmap.Save(fileSavePath);
+                            pictureBitmap.Dispose();
+                            progressBar.Value++;
+                        }
+                        catch (Exception exp)
+                        {
+                            Console.WriteLine("exp : " + exp.Message);
+                        }
                     }
-                    catch (Exception exp)
-                    {
-                        Console.WriteLine("exp : " + exp.Message);
-                    }
+                    currentIndex += mediaModel.data.Count;
                 }
-                currentIndex += mediaModel.data.Count;
             }
+            else
+            {
+                MessageBox.Show("請選擇檔案存放位置");
+            }            
 
             btnSaveAllPicture.Enabled = true;
         }
