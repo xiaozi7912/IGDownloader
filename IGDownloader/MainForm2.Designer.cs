@@ -38,6 +38,7 @@
             this.btnSaveAllPicture = new System.Windows.Forms.Button();
             this.btnLoadNextPage = new System.Windows.Forms.Button();
             this.labelTotalCount = new System.Windows.Forms.Label();
+            this.btnLoadAllPicture = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txtAccount
@@ -106,7 +107,7 @@
             // btnSaveAllPicture
             // 
             this.btnSaveAllPicture.AutoSize = true;
-            this.btnSaveAllPicture.Location = new System.Drawing.Point(423, 43);
+            this.btnSaveAllPicture.Location = new System.Drawing.Point(536, 43);
             this.btnSaveAllPicture.Name = "btnSaveAllPicture";
             this.btnSaveAllPicture.Size = new System.Drawing.Size(110, 25);
             this.btnSaveAllPicture.TabIndex = 7;
@@ -135,11 +136,23 @@
             this.labelTotalCount.TabIndex = 9;
             this.labelTotalCount.Text = "照片總數：99999";
             // 
+            // btnLoadAllPicture
+            // 
+            this.btnLoadAllPicture.AutoSize = true;
+            this.btnLoadAllPicture.Location = new System.Drawing.Point(423, 43);
+            this.btnLoadAllPicture.Name = "btnLoadAllPicture";
+            this.btnLoadAllPicture.Size = new System.Drawing.Size(107, 25);
+            this.btnLoadAllPicture.TabIndex = 10;
+            this.btnLoadAllPicture.Text = "載入所有圖片";
+            this.btnLoadAllPicture.UseVisualStyleBackColor = true;
+            this.btnLoadAllPicture.Click += new System.EventHandler(this.btnLoadAllPicture_Click);
+            // 
             // MainForm2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1182, 503);
+            this.Controls.Add(this.btnLoadAllPicture);
             this.Controls.Add(this.labelTotalCount);
             this.Controls.Add(this.btnLoadNextPage);
             this.Controls.Add(this.btnSaveAllPicture);
@@ -152,6 +165,7 @@
             this.Controls.Add(this.txtAccount);
             this.MaximizeBox = false;
             this.Name = "MainForm2";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MainForm2";
             this.Deactivate += new System.EventHandler(this.MainForm2_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm2_FormClosing);
@@ -175,5 +189,6 @@
         private System.Windows.Forms.Button btnSaveAllPicture;
         private System.Windows.Forms.Button btnLoadNextPage;
         private System.Windows.Forms.Label labelTotalCount;
+        private System.Windows.Forms.Button btnLoadAllPicture;
     }
 }

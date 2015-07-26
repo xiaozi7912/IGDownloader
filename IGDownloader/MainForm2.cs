@@ -27,6 +27,7 @@ namespace IGDownloader
 
         private int mSelectedUserIndex = 0;
         private Boolean mIsPictureLoading = false;
+        private Boolean mIsAllPictureLoaded = false;
 
         public MainForm2()
         {
@@ -196,6 +197,11 @@ namespace IGDownloader
             getUserMedia();
         }
 
+        private void btnLoadAllPicture_Click(object sender, EventArgs e)
+        {
+            loadAllPicture();
+        }
+
         private void checkDirExists(String dirPath)
         {
             if (!Directory.Exists(dirPath))
@@ -345,6 +351,21 @@ namespace IGDownloader
             }
         }
 
+        private void loadAllPicture()
+        {
+            new Thread(() =>
+            {
+                while (!mIsAllPictureLoaded)
+                {
+                    Invoke(new Action(() =>
+                    {
+                        getUserMedia();
+                    }));
+                    Thread.Sleep(1000);
+                }
+            }).Start();
+        }
+
         private void updateConfig()
         {
             txtSavePath.Text = mConfigModel.savePath;
@@ -354,11 +375,13 @@ namespace IGDownloader
         {
             btnSaveAllPicture.Enabled = !mIsPictureLoading;
             btnLoadNextPage.Enabled = !mIsPictureLoading;
+            btnLoadAllPicture.Enabled = !mIsPictureLoading;
             labelTotalCount.Text = String.Format("照片總數：{0}", mPictureList.Images.Count);
 
             if (mMediaModel != null)
             {
                 btnLoadNextPage.Enabled = (mMediaModel.pagination.next_url == null) ? false : true;
+                mIsAllPictureLoaded = (mMediaModel.pagination.next_url == null) ? true : false;
             }
         }
     }
